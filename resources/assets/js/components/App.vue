@@ -52,7 +52,7 @@
 <script>
     export default{
         created: function(){
-           //this.goHomePanel();
+           this.goHomePanel();
         },
        methods: {
              goHomePanel: function(){

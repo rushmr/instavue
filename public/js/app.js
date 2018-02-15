@@ -1132,7 +1132,7 @@ module.exports = Cancel;
 
 /* harmony default export */ __webpack_exports__["a"] = ({
    created: function created() {
-      //this.goHomePanel();
+      this.goHomePanel();
    },
    methods: {
       goHomePanel: function goHomePanel() {
