@@ -29,7 +29,7 @@ class PanelController extends Controller
             $executedPosts = Post::where(['project_id'=>$settings->project_id, 'executed'=>1])->count();
         } else {
             $project = 'нет';
-            $futuredPosts = 111;
+            $futuredPosts = '';
             $executedPosts = 0;
         }
 
@@ -51,7 +51,7 @@ class PanelController extends Controller
         ]);
 
         if(!$validator->passes()){
-            return response()->json(['success' => 0, 'error' => 'Some of required fields empty']);
+            return response()->json(['success' => 0, 'error' => 'Необходимые поля не заполнены']);
         }
 
        $settings = Setting::firstOrFail();
@@ -66,19 +66,19 @@ class PanelController extends Controller
         return view('panel.projects')->with('projects', Project::all());
     }
 
-    public function projectCreate(){
-        return view('panel.project_create');
-    }
-
     public function projectStore(Request $request){
-
-        $this->validate($request, [
+        
+        $validator = Validator::make($request->all(), [
             'name' => 'required',
             'password' => 'required',
             'login' => 'required',
             'feed' => 'required',
             'tags' => 'required'
         ]);
+
+        if(!$validator->passes()){
+            return response()->json(['success' => 0, 'error' => 'Необходимые поля не заполнены']);
+        }
 
         $feed = explode("\r\n", $request->feed);
         $tags = explode("\r\n", $request->tags);
@@ -91,8 +91,7 @@ class PanelController extends Controller
             'tags' => json_encode($tags),
         ]);
 
-        Session::flash('success', 'Проект добавлен');
-        return redirect()->route('settings');
+        return response()->json(['success' => 1]);
     }
 
     public function projectEdit($id){

@@ -29,6 +29,9 @@ require('./bootstrap');
 window.toastr = require('toastr');
 import Vue from 'vue';
 
+//import VModal from 'vue-js-modal'
+//Vue.use(VModal)
+
 import VueRouter from 'vue-router';
 Vue.use(VueRouter);
 
@@ -39,16 +42,17 @@ Vue.use(VueAxios, axios);
 import App from './components/App.vue';
 import homePanel from './components/homePanel.vue';
 import settings from './components/settings.vue';
+import addProject from './components/addProject.vue';
 const routes = [
     {
       name: 'homePanel',
       path: '/panel',
       component: homePanel
   },
-     {
+   {
       name: 'settings',
       path: '/panel/settings',
-      component: settings
+      component: settings,
   }
 ];
 

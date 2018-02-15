@@ -59,7 +59,7 @@ export default
         //console.log(r);
         if(r.data.success){
           app.futuredPosts = r.data.response.futuredPosts;
-          app.executedPosts = r.data.response.futuredPosts;
+          app.executedPosts = r.data.response.executedPosts;
           app.project = r.data.response.project;
         } else {
           console.log(r.data.error);

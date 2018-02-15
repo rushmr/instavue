@@ -1,13 +1,16 @@
 <template>
 <div>
 
+
  <div class="row">
     <div class="col-md-3">
     <a href=""><button type="button" class="btn btn-info">Список проектов</button></a>
     </div>
     <div class="col-md-3">
-    <a href=""><button type="button" class="btn btn-info">Добавить проект</button></a>
+      <add-project id="3"></add-project>
     </div>
+
+
   </div>
     <br>
 
@@ -17,7 +20,7 @@
 
 
 
-   <form v-on:submit.prevent="submitForm" method="POST">
+   <form v-on:submit.prevent="saveSettings" method="POST">
 
     <div class="form-group">
       <label for="title">Текущий проект</label>
@@ -44,12 +47,18 @@
   </div>
 
   </div>
+
+
 </div>
 </template>
 
 <script>
+import addProject from './addProject.vue';
 export default 
 {
+  components: {
+    'add-project': addProject
+  },
   data: function(){
     return {
       settings: {
@@ -57,7 +66,7 @@ export default
         vk_service_token: '',
         posts_amount: '',
         project_id: ''
-      }
+      },
     }
   },
    created: function(){
@@ -80,9 +89,8 @@ export default
           console.log(e);
         });
       },
-      submitForm: function(){
+      saveSettings: function(){
         var app = this;
-        //var toastr = toastr;
         this.axios.post('/api/settings/update', app.settings).then(function(r){
           if(r.data.success){
             toastr.success('Настройки обновлены');
@@ -95,6 +103,18 @@ export default
       },
       setProject: function(e){
         this.settings.project_id = parseInt(e.target.value);
+      },
+      addProject: function(){
+        var app = this;
+        this.axios.post('/api/project/add', app.settings).then(function(r){
+          if(r.data.success){
+            toastr.success('Настройки обновлены');
+          } else {
+            toastr.error(r.data.error);
+          }
+        }).catch(function(e) {
+          console.log(e);
+        });
       }
     }
   }
