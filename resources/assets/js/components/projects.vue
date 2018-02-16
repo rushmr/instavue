@@ -12,7 +12,7 @@
     <br>
 
     <div class="row">
-      <div class="col-md-8">
+      <div class="col-md-12">
 <div class="panel panel-info">
 
   <div class="panel-heading">
@@ -24,13 +24,17 @@
 
 
   <table class="table table-hover">
-
+    <thead>
+    <th>Название</th>
+    <th>Редактирование</th>
+    <th>Удаление</th>
+    </thead>
 
     <tbody>
 
       <tr v-for="project in projects">
         <td>{{ project.name }}</td>
-        <router-link :to="{name: 'editProject', params: {id: project.id}}" class="btn btn-info">Редактировать</router-link>
+        <td><router-link :to="{name: 'editProject', params: {id: project.id}}" class="btn btn-xs btn-info">Редактировать</router-link></td>
         <td><a onclick="return confirm('Уверены?');" class="btn btn-xs btn-danger" v-on:click="deleteProject(project.id)">Удалить</a></td>
       </tr>
 
@@ -58,7 +62,7 @@ export default
     }
   },
    created: function(){
-    this.fetchItems();
+      this.fetchItems();
    },
    methods: {
       fetchItems(){

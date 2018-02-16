@@ -6,9 +6,7 @@
         <div class="col-md-8 col-md-offset-2">
             <div class="panel panel-default">
                 <div class="panel-heading">
-        
                  <router-link :to="{name: 'homePanel'}" class="btn btn-block btn-lg btn-info">Статистика</router-link>
-
                 </div>
 
                 <div class="panel-body">
@@ -21,11 +19,12 @@
                     </div>
 
                     <div class="col-md-4">
-                        <a style='text-decoration:none' href=""><button type="button" class="btn btn-block btn-lg btn-info">Получение</button></a>
+                    <router-link :to="{name: 'get'}" class="btn btn-block btn-lg btn-info">Получение</router-link>
+
                     </div>
 
                      <div class="col-md-4">
-                          <a style='text-decoration:none' href=""><button type="button" class="btn btn-block btn-lg btn-info">Постинг</button></a>
+                          <a style='text-decoration:none' v-on:click="sendPost"><button type="button" class="btn btn-block btn-lg btn-info">Постинг</button></a>
                     </div>
                 </div>
 <br>
@@ -67,6 +66,19 @@
              goHomePanel: function(){
                 this.$router.replace('/panel');
           },
+          sendPost: function(){
+
+            this.axios.get('/api/post').then(function(r){
+
+            if(r.data.success){
+              toastr.success('Пост отправлен в Инстаграм');
+            } else {
+              toastr.error(r.data.error);
+            }
+            }).catch(function(e) {
+              console.log(e);
+            });
+          }
        }
     }
 </script>

@@ -45,6 +45,7 @@ import settings from './components/settings.vue';
 import projects from './components/projects.vue';
 import addProject from './components/addProject.vue';
 import editProject from './components/editProject.vue';
+import get from './components/get.vue';
 
 const routes = [
    {
@@ -72,7 +73,15 @@ const routes = [
       path: '/panel/project/edit/:id',
       component: editProject,
   },
+  {
+      name: 'get',
+      path: '/panel/get',
+      component: get,
+  }
 ];
 
 const router = new VueRouter({ mode: 'abstract', routes: routes});
-new Vue(Vue.util.extend({ router }, App)).$mount('#app');
+if(location.pathname.substring(1) == 'panel') {
+	new Vue(Vue.util.extend({ router }, App)).$mount('#app');
+}
+

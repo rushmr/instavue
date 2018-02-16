@@ -71,7 +71,7 @@ export default
             app.project.feed = r.data.response.feed;
             app.project.tags = r.data.response.tags;
           } else {
-            toastr.error(r.data.error);
+            console.log(r.data.error);
           }
         }).catch(function(e) {
           console.log(e);
