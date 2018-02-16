@@ -31,7 +31,7 @@
 <br>
 
 <transition name="fade">
-    <router-view></router-view>
+    <router-view :key="$route.fullPath"></router-view>
 </transition>
 
 </div>
@@ -51,6 +51,15 @@
 
 <script>
     export default{
+        data: function(){
+            return {
+                projectSettings: {
+                    project_id: 0,
+                    vk_service_token: ''
+                }
+                
+            }
+        },
         created: function(){
            this.goHomePanel();
         },

@@ -56,11 +56,16 @@ export default
       fetchItems(){
         var app = this;
         this.axios.get('/api/homePanel').then(function(r){
-        //console.log(r);
+        console.log(r);
         if(r.data.success){
           app.futuredPosts = r.data.response.futuredPosts;
           app.executedPosts = r.data.response.executedPosts;
           app.project = r.data.response.project;
+          app.$root.projectSettings = {
+            project_id: r.data.response.settings.project_id,
+            vk_service_token: r.data.response.settings.vk_service_token,
+          };
+          //console.log(app.$root.projectSettings);
         } else {
           console.log(r.data.error);
         }

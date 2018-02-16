@@ -11502,14 +11502,23 @@ module.exports = Cancel;
 //
 
 /* harmony default export */ __webpack_exports__["a"] = ({
-   created: function created() {
-      this.goHomePanel();
-   },
-   methods: {
-      goHomePanel: function goHomePanel() {
-         this.$router.replace('/panel');
-      }
-   }
+    data: function data() {
+        return {
+            projectSettings: {
+                project_id: 0,
+                vk_service_token: ''
+            }
+
+        };
+    },
+    created: function created() {
+        this.goHomePanel();
+    },
+    methods: {
+        goHomePanel: function goHomePanel() {
+            this.$router.replace('/panel');
+        }
+    }
 });
 
 /***/ }),
@@ -11574,11 +11583,16 @@ module.exports = Cancel;
     fetchItems: function fetchItems() {
       var app = this;
       this.axios.get('/api/homePanel').then(function (r) {
-        //console.log(r);
+        console.log(r);
         if (r.data.success) {
           app.futuredPosts = r.data.response.futuredPosts;
           app.executedPosts = r.data.response.executedPosts;
           app.project = r.data.response.project;
+          app.$root.projectSettings = {
+            project_id: r.data.response.settings.project_id,
+            vk_service_token: r.data.response.settings.vk_service_token
+          };
+          //console.log(app.$root.projectSettings);
         } else {
           console.log(r.data.error);
         }
@@ -11594,13 +11608,6 @@ module.exports = Cancel;
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__addProject_vue__ = __webpack_require__(59);
-//
-//
-//
-//
-//
-//
 //
 //
 //
@@ -11652,9 +11659,6 @@ module.exports = Cancel;
 
 
 /* harmony default export */ __webpack_exports__["a"] = ({
-  components: {
-    'add-project': __WEBPACK_IMPORTED_MODULE_0__addProject_vue__["a" /* default */]
-  },
   data: function data() {
     return {
       settings: {
@@ -11672,12 +11676,13 @@ module.exports = Cancel;
     fetchItems: function fetchItems() {
       var app = this;
       this.axios.get('/api/settings').then(function (r) {
-        //console.log(r)
         if (r.data.success) {
-          app.settings.projects = r.data.response.projects;
-          app.settings.vk_service_token = r.data.response.settings.vk_service_token;
-          app.settings.posts_amount = r.data.response.settings.posts_amount;
-          app.settings.project_id = r.data.response.settings.project_id;
+          app.settings = {
+            projects: r.data.response.projects,
+            vk_service_token: r.data.response.settings.vk_service_token,
+            posts_amount: r.data.response.settings.posts_amount,
+            project_id: r.data.response.settings.project_id
+          };
         } else {
           console.log(r.data.error);
         }
@@ -11690,6 +11695,10 @@ module.exports = Cancel;
       var app = this;
       this.axios.post('/api/settings/update', app.settings).then(function (r) {
         if (r.data.success) {
+          app.$root.projectSettings = {
+            project_id: app.settings.project_id,
+            vk_service_token: app.settings.vk_service_token
+          };
           toastr.success('Настройки обновлены');
         } else {
           toastr.error(r.data.error);
@@ -11771,13 +11780,8 @@ module.exports = Cancel;
 //
 //
 //
-//
-//
-//
-//
 
 /* harmony default export */ __webpack_exports__["a"] = ({
-  props: ['id'],
   data: function data() {
     return {
       project: {
@@ -11797,8 +11801,7 @@ module.exports = Cancel;
       this.axios.post('/api/project/store', this.project).then(function (r) {
         if (r.data.success) {
           toastr.success('Проект добавлен');
-          $('#addProject').modal('hide');
-          app.$router.push('/panel');
+          app.$router.push('/panel/projects');
         } else {
           toastr.error(r.data.error);
         }
@@ -11839,7 +11842,9 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__components_App_vue__ = __webpack_require__(48);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__components_homePanel_vue__ = __webpack_require__(55);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__components_settings_vue__ = __webpack_require__(57);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__components_addProject_vue__ = __webpack_require__(59);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__components_projects_vue__ = __webpack_require__(72);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__components_addProject_vue__ = __webpack_require__(59);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__components_editProject_vue__ = __webpack_require__(75);
 
 /**
  * First we will load all of this project's JavaScript dependencies which
@@ -11885,14 +11890,29 @@ __WEBPACK_IMPORTED_MODULE_0_vue___default.a.use(__WEBPACK_IMPORTED_MODULE_2_vue_
 
 
 
+
+
+
 var routes = [{
-  name: 'homePanel',
-  path: '/panel',
-  component: __WEBPACK_IMPORTED_MODULE_5__components_homePanel_vue__["a" /* default */]
+    name: 'homePanel',
+    path: '/panel',
+    component: __WEBPACK_IMPORTED_MODULE_5__components_homePanel_vue__["a" /* default */]
 }, {
-  name: 'settings',
-  path: '/panel/settings',
-  component: __WEBPACK_IMPORTED_MODULE_6__components_settings_vue__["a" /* default */]
+    name: 'settings',
+    path: '/panel/settings',
+    component: __WEBPACK_IMPORTED_MODULE_6__components_settings_vue__["a" /* default */]
+}, {
+    name: 'projects',
+    path: '/panel/projects',
+    component: __WEBPACK_IMPORTED_MODULE_7__components_projects_vue__["a" /* default */]
+}, {
+    name: 'addProject',
+    path: '/panel/project/create',
+    component: __WEBPACK_IMPORTED_MODULE_8__components_addProject_vue__["a" /* default */]
+}, {
+    name: 'editProject',
+    path: '/panel/project/edit/:id',
+    component: __WEBPACK_IMPORTED_MODULE_9__components_editProject_vue__["a" /* default */]
 }];
 
 var router = new __WEBPACK_IMPORTED_MODULE_1_vue_router__["a" /* default */]({ mode: 'abstract', routes: routes });
@@ -47069,7 +47089,7 @@ var render = function() {
             _c(
               "transition",
               { attrs: { name: "fade" } },
-              [_c("router-view")],
+              [_c("router-view", { key: _vm.$route.fullPath })],
               1
             )
           ],
@@ -47345,12 +47365,35 @@ var render = function() {
   var _c = _vm._self._c || _h
   return _c("div", [
     _c("div", { staticClass: "row" }, [
-      _vm._m(0),
+      _c(
+        "div",
+        { staticClass: "col-md-3" },
+        [
+          _c(
+            "router-link",
+            {
+              staticClass: "btn btn-info",
+              attrs: { to: { name: "projects" } }
+            },
+            [_vm._v("Список проектов")]
+          )
+        ],
+        1
+      ),
       _vm._v(" "),
       _c(
         "div",
         { staticClass: "col-md-3" },
-        [_c("add-project", { attrs: { id: "3" } })],
+        [
+          _c(
+            "router-link",
+            {
+              staticClass: "btn btn-info",
+              attrs: { to: { name: "addProject" } }
+            },
+            [_vm._v("Добавить проект")]
+          )
+        ],
         1
       )
     ]),
@@ -47391,38 +47434,19 @@ var render = function() {
                   _c("option", { attrs: { value: "0" } }, [_vm._v("Нет")]),
                   _vm._v(" "),
                   _vm._l(_vm.settings.projects, function(project) {
-                    return project.id == _vm.settings.project_id
-                      ? _c(
-                          "option",
-                          {
-                            attrs: { selected: "" },
-                            domProps: { value: project.id },
-                            model: {
-                              value: project.id,
-                              callback: function($$v) {
-                                _vm.$set(project, "id", $$v)
-                              },
-                              expression: "project.id"
-                            }
-                          },
-                          [_vm._v(_vm._s(project.name))]
-                        )
-                      : _vm._l(_vm.settings.projects, function(project) {
-                          return _c(
-                            "option",
-                            {
-                              domProps: { value: project.id },
-                              model: {
-                                value: project.id,
-                                callback: function($$v) {
-                                  _vm.$set(project, "id", $$v)
-                                },
-                                expression: "project.id"
-                              }
-                            },
-                            [_vm._v(_vm._s(project.name))]
-                          )
-                        })
+                    return _c(
+                      "option",
+                      {
+                        domProps: {
+                          selected:
+                            project.id == _vm.settings.project_id
+                              ? true
+                              : false,
+                          value: project.id
+                        }
+                      },
+                      [_vm._v(_vm._s(project.name))]
+                    )
                   })
                 ],
                 2
@@ -47500,22 +47524,7 @@ var render = function() {
     ])
   ])
 }
-var staticRenderFns = [
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "col-md-3" }, [
-      _c("a", { attrs: { href: "" } }, [
-        _c(
-          "button",
-          { staticClass: "btn btn-info", attrs: { type: "button" } },
-          [_vm._v("Список проектов")]
-        )
-      ])
-    ])
-  }
-]
+var staticRenderFns = []
 render._withStripped = true
 
 if (false) {
@@ -47591,204 +47600,198 @@ var render = function() {
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
   return _c("div", [
-    _c(
-      "button",
-      {
-        staticClass: "btn btn-info",
-        attrs: {
-          type: "button",
-          "data-toggle": "modal",
-          "data-target": "#addProject"
-        }
-      },
-      [_vm._v("Добавить проект")]
-    ),
+    _c("div", { staticClass: "row" }, [
+      _c(
+        "div",
+        { staticClass: "col-md-3" },
+        [
+          _c(
+            "router-link",
+            {
+              staticClass: "btn btn-info",
+              attrs: { to: { name: "projects" } }
+            },
+            [_vm._v("Список проектов")]
+          )
+        ],
+        1
+      )
+    ]),
     _vm._v(" "),
-    _c(
-      "div",
-      {
-        staticClass: "modal fade",
-        attrs: {
-          id: "addProject",
-          tabindex: "-1",
-          role: "dialog",
-          "aria-labelledby": "favoritesModalLabel"
-        }
-      },
-      [
-        _c(
-          "form",
-          {
-            attrs: { method: "POST" },
-            on: {
-              submit: function($event) {
-                $event.preventDefault()
-                _vm.submitForm($event)
-              }
-            }
-          },
-          [
+    _c("br"),
+    _vm._v(" "),
+    _c("div", { staticClass: "row" }, [
+      _c("div", { staticClass: "col-md-12" }, [
+        _c("div", { staticClass: "panel panel-info" }, [
+          _vm._m(0),
+          _vm._v(" "),
+          _c("div", { staticClass: "panel-body" }, [
             _c(
-              "div",
-              { staticClass: "modal-dialog", attrs: { role: "document" } },
+              "form",
+              {
+                attrs: { method: "POST" },
+                on: {
+                  submit: function($event) {
+                    $event.preventDefault()
+                    _vm.submitForm($event)
+                  }
+                }
+              },
               [
-                _c("div", { staticClass: "modal-content" }, [
-                  _vm._m(0),
-                  _vm._v(" "),
-                  _c("div", { staticClass: "modal-body" }, [
-                    _c("div", { staticClass: "form-group" }, [
-                      _c("label", { attrs: { for: "name" } }, [
-                        _vm._v("Название")
-                      ]),
-                      _vm._v(" "),
-                      _c("input", {
-                        directives: [
-                          {
-                            name: "model",
-                            rawName: "v-model",
-                            value: _vm.project.name,
-                            expression: "project.name"
-                          }
-                        ],
-                        staticClass: "form-control",
-                        attrs: { type: "text", name: "name" },
-                        domProps: { value: _vm.project.name },
-                        on: {
-                          input: function($event) {
-                            if ($event.target.composing) {
-                              return
-                            }
-                            _vm.$set(_vm.project, "name", $event.target.value)
-                          }
-                        }
-                      })
-                    ]),
-                    _vm._v(" "),
-                    _c("div", { staticClass: "form-group" }, [
-                      _c("label", { attrs: { for: "login" } }, [
-                        _vm._v("Инстаграмм логин")
-                      ]),
-                      _vm._v(" "),
-                      _c("input", {
-                        directives: [
-                          {
-                            name: "model",
-                            rawName: "v-model",
-                            value: _vm.project.login,
-                            expression: "project.login"
-                          }
-                        ],
-                        staticClass: "form-control",
-                        attrs: { type: "text" },
-                        domProps: { value: _vm.project.login },
-                        on: {
-                          input: function($event) {
-                            if ($event.target.composing) {
-                              return
-                            }
-                            _vm.$set(_vm.project, "login", $event.target.value)
-                          }
-                        }
-                      })
-                    ]),
-                    _vm._v(" "),
-                    _c("div", { staticClass: "form-group" }, [
-                      _c("label", { attrs: { for: "password" } }, [
-                        _vm._v("Инстаграмм пароль")
-                      ]),
-                      _vm._v(" "),
-                      _c("input", {
-                        directives: [
-                          {
-                            name: "model",
-                            rawName: "v-model",
-                            value: _vm.project.password,
-                            expression: "project.password"
-                          }
-                        ],
-                        staticClass: "form-control",
-                        attrs: { type: "password" },
-                        domProps: { value: _vm.project.password },
-                        on: {
-                          input: function($event) {
-                            if ($event.target.composing) {
-                              return
-                            }
-                            _vm.$set(
-                              _vm.project,
-                              "password",
-                              $event.target.value
-                            )
-                          }
-                        }
-                      })
-                    ]),
-                    _vm._v(" "),
-                    _c("div", { staticClass: "form-group" }, [
-                      _c("label", { attrs: { for: "feed" } }, [
-                        _vm._v("Источники контента (паблики VK)")
-                      ]),
-                      _vm._v(" "),
-                      _c("textarea", {
-                        directives: [
-                          {
-                            name: "model",
-                            rawName: "v-model",
-                            value: _vm.project.feed,
-                            expression: "project.feed"
-                          }
-                        ],
-                        staticClass: "form-control",
-                        attrs: { id: "feed", rows: "1" },
-                        domProps: { value: _vm.project.feed },
-                        on: {
-                          input: function($event) {
-                            if ($event.target.composing) {
-                              return
-                            }
-                            _vm.$set(_vm.project, "feed", $event.target.value)
-                          }
-                        }
-                      })
-                    ]),
-                    _vm._v(" "),
-                    _c("div", { staticClass: "form-group" }, [
-                      _c("label", { attrs: { for: "tags" } }, [
-                        _vm._v("Список тегов для поста")
-                      ]),
-                      _vm._v(" "),
-                      _c("textarea", {
-                        directives: [
-                          {
-                            name: "model",
-                            rawName: "v-model",
-                            value: _vm.project.tags,
-                            expression: "project.tags"
-                          }
-                        ],
-                        staticClass: "form-control",
-                        attrs: { id: "tags", rows: "1" },
-                        domProps: { value: _vm.project.tags },
-                        on: {
-                          input: function($event) {
-                            if ($event.target.composing) {
-                              return
-                            }
-                            _vm.$set(_vm.project, "tags", $event.target.value)
-                          }
-                        }
-                      })
-                    ])
+                _c("div", { staticClass: "form-group" }, [
+                  _c("label", { attrs: { for: "login" } }, [
+                    _vm._v("Название")
                   ]),
                   _vm._v(" "),
-                  _vm._m(1)
-                ])
+                  _c("input", {
+                    directives: [
+                      {
+                        name: "model",
+                        rawName: "v-model",
+                        value: _vm.project.name,
+                        expression: "project.name"
+                      }
+                    ],
+                    staticClass: "form-control",
+                    attrs: { type: "text" },
+                    domProps: { value: _vm.project.name },
+                    on: {
+                      input: function($event) {
+                        if ($event.target.composing) {
+                          return
+                        }
+                        _vm.$set(_vm.project, "name", $event.target.value)
+                      }
+                    }
+                  })
+                ]),
+                _vm._v(" "),
+                _c("div", { staticClass: "form-group" }, [
+                  _c("label", { attrs: { for: "login" } }, [
+                    _vm._v("Инстаграмм логин")
+                  ]),
+                  _vm._v(" "),
+                  _c("input", {
+                    directives: [
+                      {
+                        name: "model",
+                        rawName: "v-model",
+                        value: _vm.project.login,
+                        expression: "project.login"
+                      }
+                    ],
+                    staticClass: "form-control",
+                    attrs: { type: "text" },
+                    domProps: { value: _vm.project.login },
+                    on: {
+                      input: function($event) {
+                        if ($event.target.composing) {
+                          return
+                        }
+                        _vm.$set(_vm.project, "login", $event.target.value)
+                      }
+                    }
+                  })
+                ]),
+                _vm._v(" "),
+                _c("div", { staticClass: "form-group" }, [
+                  _c("label", { attrs: { for: "password" } }, [
+                    _vm._v("Инстаграмм пароль")
+                  ]),
+                  _vm._v(" "),
+                  _c("input", {
+                    directives: [
+                      {
+                        name: "model",
+                        rawName: "v-model",
+                        value: _vm.project.password,
+                        expression: "project.password"
+                      }
+                    ],
+                    staticClass: "form-control",
+                    attrs: { type: "password" },
+                    domProps: { value: _vm.project.password },
+                    on: {
+                      input: function($event) {
+                        if ($event.target.composing) {
+                          return
+                        }
+                        _vm.$set(_vm.project, "password", $event.target.value)
+                      }
+                    }
+                  })
+                ]),
+                _vm._v(" "),
+                _c("div", { staticClass: "form-group" }, [
+                  _c("label", { attrs: { for: "feed" } }, [
+                    _vm._v("Источники контента (паблики VK)")
+                  ]),
+                  _vm._v(" "),
+                  _c("textarea", {
+                    directives: [
+                      {
+                        name: "model",
+                        rawName: "v-model",
+                        value: _vm.project.feed,
+                        expression: "project.feed"
+                      }
+                    ],
+                    staticClass: "form-control",
+                    attrs: { id: "feed", rows: "1" },
+                    domProps: { value: _vm.project.feed },
+                    on: {
+                      input: function($event) {
+                        if ($event.target.composing) {
+                          return
+                        }
+                        _vm.$set(_vm.project, "feed", $event.target.value)
+                      }
+                    }
+                  })
+                ]),
+                _vm._v(" "),
+                _c("div", { staticClass: "form-group" }, [
+                  _c("label", { attrs: { for: "tags" } }, [
+                    _vm._v("Список тегов для поста")
+                  ]),
+                  _vm._v(" "),
+                  _c("textarea", {
+                    directives: [
+                      {
+                        name: "model",
+                        rawName: "v-model",
+                        value: _vm.project.tags,
+                        expression: "project.tags"
+                      }
+                    ],
+                    staticClass: "form-control",
+                    attrs: { id: "tags", rows: "1" },
+                    domProps: { value: _vm.project.tags },
+                    on: {
+                      input: function($event) {
+                        if ($event.target.composing) {
+                          return
+                        }
+                        _vm.$set(_vm.project, "tags", $event.target.value)
+                      }
+                    }
+                  })
+                ]),
+                _vm._v(" "),
+                _c(
+                  "button",
+                  {
+                    staticClass: "btn btn-success btn-block",
+                    attrs: { type: "submit" }
+                  },
+                  [_vm._v("Добавить")]
+                )
               ]
             )
-          ]
-        )
-      ]
-    )
+          ])
+        ])
+      ])
+    ])
   ])
 }
 var staticRenderFns = [
@@ -47796,37 +47799,8 @@ var staticRenderFns = [
     var _vm = this
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "modal-header" }, [
-      _c(
-        "button",
-        {
-          staticClass: "close",
-          attrs: {
-            type: "button",
-            "data-dismiss": "modal",
-            "aria-label": "Close"
-          }
-        },
-        [_c("span", { attrs: { "aria-hidden": "true" } }, [_vm._v("×")])]
-      ),
-      _vm._v(" "),
-      _c(
-        "h4",
-        { staticClass: "modal-title", attrs: { id: "favoritesModalLabel" } },
-        [_vm._v("Добавить проект")]
-      )
-    ])
-  },
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "modal-footer" }, [
-      _c(
-        "button",
-        { staticClass: "btn btn-success btn-block", attrs: { type: "submit" } },
-        [_vm._v("Добавить")]
-      )
+    return _c("div", { staticClass: "panel-heading" }, [
+      _c("h4", [_vm._v("Добавить проект")])
     ])
   }
 ]
@@ -47844,6 +47818,690 @@ if (false) {
 /***/ (function(module, exports) {
 
 // removed by extract-text-webpack-plugin
+
+/***/ }),
+/* 62 */,
+/* 63 */,
+/* 64 */,
+/* 65 */,
+/* 66 */,
+/* 67 */,
+/* 68 */,
+/* 69 */,
+/* 70 */,
+/* 71 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
+/* harmony default export */ __webpack_exports__["a"] = ({
+
+  data: function data() {
+    return {
+      projects: []
+
+    };
+  },
+  created: function created() {
+    this.fetchItems();
+  },
+  methods: {
+    fetchItems: function fetchItems() {
+      var app = this;
+      this.axios.get('/api/projects').then(function (r) {
+        if (r.data.success) {
+          app.projects = r.data.response.projects;
+        } else {
+          console.log(r.data.error);
+        }
+      }).catch(function (e) {
+        console.log(e);
+      });
+    },
+    deleteProject: function deleteProject(id) {
+      var app = this;
+      this.axios.get('/api/project/delete/' + id).then(function (r) {
+        if (r.data.success) {
+          var items = [{ id: id }];
+          app.projects.splice(_.indexOf(items, _.find(items, function (item) {
+            return item.Id === 2;
+          })), 1);
+          toastr.success('Проект удален');
+        } else {
+          console.log(r.data.error);
+        }
+      }).catch(function (e) {
+        console.log(e);
+      });
+    }
+  }
+});
+
+/***/ }),
+/* 72 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__babel_loader_cacheDirectory_true_presets_env_modules_false_targets_browsers_2_uglify_true_plugins_transform_object_rest_spread_transform_runtime_polyfill_false_helpers_false_node_modules_vue_loader_lib_selector_type_script_index_0_projects_vue__ = __webpack_require__(71);
+/* unused harmony namespace reexport */
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__node_modules_vue_loader_lib_template_compiler_index_id_data_v_23e91dd1_hasScoped_false_buble_transforms_node_modules_vue_loader_lib_selector_type_template_index_0_projects_vue__ = __webpack_require__(73);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__node_modules_vue_loader_lib_runtime_component_normalizer__ = __webpack_require__(2);
+var disposed = false
+/* script */
+
+
+/* template */
+
+/* template functional */
+var __vue_template_functional__ = false
+/* styles */
+var __vue_styles__ = null
+/* scopeId */
+var __vue_scopeId__ = null
+/* moduleIdentifier (server only) */
+var __vue_module_identifier__ = null
+
+var Component = Object(__WEBPACK_IMPORTED_MODULE_2__node_modules_vue_loader_lib_runtime_component_normalizer__["a" /* default */])(
+  __WEBPACK_IMPORTED_MODULE_0__babel_loader_cacheDirectory_true_presets_env_modules_false_targets_browsers_2_uglify_true_plugins_transform_object_rest_spread_transform_runtime_polyfill_false_helpers_false_node_modules_vue_loader_lib_selector_type_script_index_0_projects_vue__["a" /* default */],
+  __WEBPACK_IMPORTED_MODULE_1__node_modules_vue_loader_lib_template_compiler_index_id_data_v_23e91dd1_hasScoped_false_buble_transforms_node_modules_vue_loader_lib_selector_type_template_index_0_projects_vue__["a" /* render */],
+  __WEBPACK_IMPORTED_MODULE_1__node_modules_vue_loader_lib_template_compiler_index_id_data_v_23e91dd1_hasScoped_false_buble_transforms_node_modules_vue_loader_lib_selector_type_template_index_0_projects_vue__["b" /* staticRenderFns */],
+  __vue_template_functional__,
+  __vue_styles__,
+  __vue_scopeId__,
+  __vue_module_identifier__
+)
+Component.options.__file = "resources\\assets\\js\\components\\projects.vue"
+
+/* hot reload */
+if (false) {(function () {
+  var hotAPI = require("vue-hot-reload-api")
+  hotAPI.install(require("vue"), false)
+  if (!hotAPI.compatible) return
+  module.hot.accept()
+  if (!module.hot.data) {
+    hotAPI.createRecord("data-v-23e91dd1", Component.options)
+  } else {
+    hotAPI.reload("data-v-23e91dd1", Component.options)
+  }
+  module.hot.dispose(function (data) {
+    disposed = true
+  })
+})()}
+
+/* harmony default export */ __webpack_exports__["a"] = (Component.exports);
+
+
+/***/ }),
+/* 73 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return render; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "b", function() { return staticRenderFns; });
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _c("div", [
+    _c("div", { staticClass: "row" }, [
+      _c(
+        "div",
+        { staticClass: "col-md-3" },
+        [
+          _c(
+            "router-link",
+            {
+              staticClass: "btn btn-info",
+              attrs: { to: { name: "projects" } }
+            },
+            [_vm._v("Список проектов")]
+          )
+        ],
+        1
+      ),
+      _vm._v(" "),
+      _c(
+        "div",
+        { staticClass: "col-md-3" },
+        [
+          _c(
+            "router-link",
+            {
+              staticClass: "btn btn-info",
+              attrs: { to: { name: "addProject" } }
+            },
+            [_vm._v("Добавить проект")]
+          )
+        ],
+        1
+      )
+    ]),
+    _vm._v(" "),
+    _c("br"),
+    _vm._v(" "),
+    _c("div", { staticClass: "row" }, [
+      _c("div", { staticClass: "col-md-8" }, [
+        _c("div", { staticClass: "panel panel-info" }, [
+          _vm._m(0),
+          _vm._v(" "),
+          _c("div", { staticClass: "panel-body" }, [
+            _c("table", { staticClass: "table table-hover" }, [
+              _c(
+                "tbody",
+                _vm._l(_vm.projects, function(project) {
+                  return _c(
+                    "tr",
+                    [
+                      _c("td", [_vm._v(_vm._s(project.name))]),
+                      _vm._v(" "),
+                      _c(
+                        "router-link",
+                        {
+                          staticClass: "btn btn-info",
+                          attrs: {
+                            to: {
+                              name: "editProject",
+                              params: { id: project.id }
+                            }
+                          }
+                        },
+                        [_vm._v("Редактировать")]
+                      ),
+                      _vm._v(" "),
+                      _c("td", [
+                        _c(
+                          "a",
+                          {
+                            staticClass: "btn btn-xs btn-danger",
+                            attrs: { onclick: "return confirm('Уверены?');" },
+                            on: {
+                              click: function($event) {
+                                _vm.deleteProject(project.id)
+                              }
+                            }
+                          },
+                          [_vm._v("Удалить")]
+                        )
+                      ])
+                    ],
+                    1
+                  )
+                })
+              )
+            ])
+          ])
+        ])
+      ])
+    ])
+  ])
+}
+var staticRenderFns = [
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "panel-heading" }, [
+      _c("h4", [_vm._v("Проекты")])
+    ])
+  }
+]
+render._withStripped = true
+
+if (false) {
+  module.hot.accept()
+  if (module.hot.data) {
+    require("vue-hot-reload-api")      .rerender("data-v-23e91dd1", { render: render, staticRenderFns: staticRenderFns })
+  }
+}
+
+/***/ }),
+/* 74 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
+/* harmony default export */ __webpack_exports__["a"] = ({
+  data: function data() {
+    return {
+      project: {}
+    };
+  },
+  created: function created() {
+    this.fetchItem();
+  },
+  methods: {
+    fetchItem: function fetchItem() {
+      var app = this;
+      this.axios.get('/api/project/' + this.$route.params.id, this.project).then(function (r) {
+        if (r.data.success) {
+          app.project = r.data.response.project;
+          app.project.feed = r.data.response.feed;
+          app.project.tags = r.data.response.tags;
+        } else {
+          toastr.error(r.data.error);
+        }
+      }).catch(function (e) {
+        console.log(e);
+      });
+    },
+    submitForm: function submitForm() {
+      var app = this;
+      this.axios.post('/api/project/update/' + this.$route.params.id, this.project).then(function (r) {
+        if (r.data.success) {
+          toastr.success('Проект обновлен');
+          app.$router.push('/panel/projects');
+        } else {
+          toastr.error(r.data.error);
+        }
+      }).catch(function (e) {
+        console.log(e);
+      });
+    },
+    setProject: function setProject(e) {
+      this.settings.project_id = parseInt(e.target.value);
+    },
+    setMsg: function setMsg(msg) {
+      toastr.success(msg);
+    }
+  }
+});
+
+/***/ }),
+/* 75 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__babel_loader_cacheDirectory_true_presets_env_modules_false_targets_browsers_2_uglify_true_plugins_transform_object_rest_spread_transform_runtime_polyfill_false_helpers_false_node_modules_vue_loader_lib_selector_type_script_index_0_editProject_vue__ = __webpack_require__(74);
+/* unused harmony namespace reexport */
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__node_modules_vue_loader_lib_template_compiler_index_id_data_v_3e840ca8_hasScoped_false_buble_transforms_node_modules_vue_loader_lib_selector_type_template_index_0_editProject_vue__ = __webpack_require__(76);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__node_modules_vue_loader_lib_runtime_component_normalizer__ = __webpack_require__(2);
+var disposed = false
+/* script */
+
+
+/* template */
+
+/* template functional */
+var __vue_template_functional__ = false
+/* styles */
+var __vue_styles__ = null
+/* scopeId */
+var __vue_scopeId__ = null
+/* moduleIdentifier (server only) */
+var __vue_module_identifier__ = null
+
+var Component = Object(__WEBPACK_IMPORTED_MODULE_2__node_modules_vue_loader_lib_runtime_component_normalizer__["a" /* default */])(
+  __WEBPACK_IMPORTED_MODULE_0__babel_loader_cacheDirectory_true_presets_env_modules_false_targets_browsers_2_uglify_true_plugins_transform_object_rest_spread_transform_runtime_polyfill_false_helpers_false_node_modules_vue_loader_lib_selector_type_script_index_0_editProject_vue__["a" /* default */],
+  __WEBPACK_IMPORTED_MODULE_1__node_modules_vue_loader_lib_template_compiler_index_id_data_v_3e840ca8_hasScoped_false_buble_transforms_node_modules_vue_loader_lib_selector_type_template_index_0_editProject_vue__["a" /* render */],
+  __WEBPACK_IMPORTED_MODULE_1__node_modules_vue_loader_lib_template_compiler_index_id_data_v_3e840ca8_hasScoped_false_buble_transforms_node_modules_vue_loader_lib_selector_type_template_index_0_editProject_vue__["b" /* staticRenderFns */],
+  __vue_template_functional__,
+  __vue_styles__,
+  __vue_scopeId__,
+  __vue_module_identifier__
+)
+Component.options.__file = "resources\\assets\\js\\components\\editProject.vue"
+
+/* hot reload */
+if (false) {(function () {
+  var hotAPI = require("vue-hot-reload-api")
+  hotAPI.install(require("vue"), false)
+  if (!hotAPI.compatible) return
+  module.hot.accept()
+  if (!module.hot.data) {
+    hotAPI.createRecord("data-v-3e840ca8", Component.options)
+  } else {
+    hotAPI.reload("data-v-3e840ca8", Component.options)
+  }
+  module.hot.dispose(function (data) {
+    disposed = true
+  })
+})()}
+
+/* harmony default export */ __webpack_exports__["a"] = (Component.exports);
+
+
+/***/ }),
+/* 76 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return render; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "b", function() { return staticRenderFns; });
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _c("div", [
+    _c("div", { staticClass: "row" }, [
+      _c(
+        "div",
+        { staticClass: "col-md-3" },
+        [
+          _c(
+            "router-link",
+            {
+              staticClass: "btn btn-info",
+              attrs: { to: { name: "projects" } }
+            },
+            [_vm._v("Список проектов")]
+          )
+        ],
+        1
+      ),
+      _vm._v(" "),
+      _c(
+        "div",
+        { staticClass: "col-md-3" },
+        [
+          _c(
+            "router-link",
+            {
+              staticClass: "btn btn-info",
+              attrs: { to: { name: "addProject" } }
+            },
+            [_vm._v("Добавить проект")]
+          )
+        ],
+        1
+      )
+    ]),
+    _vm._v(" "),
+    _c("br"),
+    _vm._v(" "),
+    _c("div", { staticClass: "row" }, [
+      _c("div", { staticClass: "col-md-12" }, [
+        _c("div", { staticClass: "panel panel-info" }, [
+          _vm._m(0),
+          _vm._v(" "),
+          _c("div", { staticClass: "panel-body" }, [
+            _c(
+              "form",
+              {
+                attrs: { method: "POST" },
+                on: {
+                  submit: function($event) {
+                    $event.preventDefault()
+                    _vm.submitForm($event)
+                  }
+                }
+              },
+              [
+                _c("div", { staticClass: "form-group" }, [
+                  _c("label", { attrs: { for: "login" } }, [
+                    _vm._v("Название")
+                  ]),
+                  _vm._v(" "),
+                  _c("input", {
+                    directives: [
+                      {
+                        name: "model",
+                        rawName: "v-model",
+                        value: _vm.project.name,
+                        expression: "project.name"
+                      }
+                    ],
+                    staticClass: "form-control",
+                    attrs: { type: "text" },
+                    domProps: { value: _vm.project.name },
+                    on: {
+                      input: function($event) {
+                        if ($event.target.composing) {
+                          return
+                        }
+                        _vm.$set(_vm.project, "name", $event.target.value)
+                      }
+                    }
+                  })
+                ]),
+                _vm._v(" "),
+                _c("div", { staticClass: "form-group" }, [
+                  _c("label", { attrs: { for: "login" } }, [
+                    _vm._v("Инстаграмм логин")
+                  ]),
+                  _vm._v(" "),
+                  _c("input", {
+                    directives: [
+                      {
+                        name: "model",
+                        rawName: "v-model",
+                        value: _vm.project.login,
+                        expression: "project.login"
+                      }
+                    ],
+                    staticClass: "form-control",
+                    attrs: { type: "text" },
+                    domProps: { value: _vm.project.login },
+                    on: {
+                      input: function($event) {
+                        if ($event.target.composing) {
+                          return
+                        }
+                        _vm.$set(_vm.project, "login", $event.target.value)
+                      }
+                    }
+                  })
+                ]),
+                _vm._v(" "),
+                _c("div", { staticClass: "form-group" }, [
+                  _c("label", { attrs: { for: "password" } }, [
+                    _vm._v("Инстаграмм пароль")
+                  ]),
+                  _vm._v(" "),
+                  _c("input", {
+                    directives: [
+                      {
+                        name: "model",
+                        rawName: "v-model",
+                        value: _vm.project.password,
+                        expression: "project.password"
+                      }
+                    ],
+                    staticClass: "form-control",
+                    attrs: { type: "password" },
+                    domProps: { value: _vm.project.password },
+                    on: {
+                      input: function($event) {
+                        if ($event.target.composing) {
+                          return
+                        }
+                        _vm.$set(_vm.project, "password", $event.target.value)
+                      }
+                    }
+                  })
+                ]),
+                _vm._v(" "),
+                _c("div", { staticClass: "form-group" }, [
+                  _c("label", { attrs: { for: "feed" } }, [
+                    _vm._v("Источники контента (паблики VK)")
+                  ]),
+                  _vm._v(" "),
+                  _c("textarea", {
+                    directives: [
+                      {
+                        name: "model",
+                        rawName: "v-model",
+                        value: _vm.project.feed,
+                        expression: "project.feed"
+                      }
+                    ],
+                    staticClass: "form-control",
+                    attrs: { id: "feed", rows: "1" },
+                    domProps: { value: _vm.project.feed },
+                    on: {
+                      input: function($event) {
+                        if ($event.target.composing) {
+                          return
+                        }
+                        _vm.$set(_vm.project, "feed", $event.target.value)
+                      }
+                    }
+                  })
+                ]),
+                _vm._v(" "),
+                _c("div", { staticClass: "form-group" }, [
+                  _c("label", { attrs: { for: "tags" } }, [
+                    _vm._v("Список тегов для поста")
+                  ]),
+                  _vm._v(" "),
+                  _c("textarea", {
+                    directives: [
+                      {
+                        name: "model",
+                        rawName: "v-model",
+                        value: _vm.project.tags,
+                        expression: "project.tags"
+                      }
+                    ],
+                    staticClass: "form-control",
+                    attrs: { id: "tags", rows: "1" },
+                    domProps: { value: _vm.project.tags },
+                    on: {
+                      input: function($event) {
+                        if ($event.target.composing) {
+                          return
+                        }
+                        _vm.$set(_vm.project, "tags", $event.target.value)
+                      }
+                    }
+                  })
+                ]),
+                _vm._v(" "),
+                _c(
+                  "button",
+                  {
+                    staticClass: "btn btn-success btn-block",
+                    attrs: { type: "submit" }
+                  },
+                  [_vm._v("Сохранить ")]
+                )
+              ]
+            )
+          ])
+        ])
+      ])
+    ])
+  ])
+}
+var staticRenderFns = [
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "panel-heading" }, [
+      _c("h4", [_vm._v("Редатировать проект")])
+    ])
+  }
+]
+render._withStripped = true
+
+if (false) {
+  module.hot.accept()
+  if (module.hot.data) {
+    require("vue-hot-reload-api")      .rerender("data-v-3e840ca8", { render: render, staticRenderFns: staticRenderFns })
+  }
+}
 
 /***/ })
 /******/ ]);

@@ -39,19 +39,14 @@ Route::group(['namespace' => 'Api', 'middleware' => 'ajax_calls'], function() {
 		'as' => 'projects'
 	]);
 
-	Route::get('project/create', [
-		'uses' => 'PanelController@projectCreate',
-		'as' => 'project.create'
-	]);
-
 	Route::post('project/store', [
 		'uses' => 'PanelController@projectStore',
 		'as' => 'project.store'
 	]);
 
-	Route::get('project/edit/{id}', [
-		'uses' => 'PanelController@projectEdit',
-		'as' => 'project.edit'
+	Route::get('project/{id}', [
+		'uses' => 'PanelController@project',
+		'as' => 'project'
 	]);
 
 	Route::post('project/update/{id}', [

@@ -5,6 +5,9 @@
     <div class="col-md-3">
       <router-link :to="{name: 'projects'}" class="btn btn-info">Список проектов</router-link>
     </div>
+    <div class="col-md-3">
+      <router-link :to="{name: 'addProject'}" class="btn btn-info">Добавить проект</router-link>
+    </div>
   </div>
     <br>
 
@@ -13,7 +16,7 @@
 <div class="panel panel-info">
 
   <div class="panel-heading">
-    <h4>Добавить проект</h4>
+    <h4>Редатировать проект</h4>
   </div>
 
   <div class="panel-body">
@@ -40,7 +43,7 @@
       <textarea id="tags" class="form-control" rows="1" v-model="project.tags"></textarea>
     </div>
 
-    <button type="submit" class="btn btn-success btn-block">Добавить</button>
+    <button type="submit" class="btn btn-success btn-block">Сохранить </button>
   
 
   </form>
@@ -53,24 +56,32 @@ export default
 {
   data: function(){
     return {
-        project: {
-          name: '',
-          login: '',
-          password: '',
-          feed: '',
-          tags: ''
-        },
-
+        project: {},
     }
   },
    created: function(){
+    this.fetchItem();
    },
    methods: {
+     fetchItem: function(){
+       var app = this;
+       this.axios.get('/api/project/'+this.$route.params.id, this.project).then(function(r){
+          if(r.data.success){
+            app.project = r.data.response.project;
+            app.project.feed = r.data.response.feed;
+            app.project.tags = r.data.response.tags;
+          } else {
+            toastr.error(r.data.error);
+          }
+        }).catch(function(e) {
+          console.log(e);
+        });
+     },
       submitForm: function(){
         var app = this;
-        this.axios.post('/api/project/store', this.project).then(function(r){
+        this.axios.post('/api/project/update/'+this.$route.params.id, this.project).then(function(r){
           if(r.data.success){
-            toastr.success('Проект добавлен');
+            toastr.success('Проект обновлен');
             app.$router.push('/panel/projects');
           } else {
             toastr.error(r.data.error);

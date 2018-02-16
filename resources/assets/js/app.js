@@ -42,18 +42,36 @@ Vue.use(VueAxios, axios);
 import App from './components/App.vue';
 import homePanel from './components/homePanel.vue';
 import settings from './components/settings.vue';
+import projects from './components/projects.vue';
 import addProject from './components/addProject.vue';
+import editProject from './components/editProject.vue';
+
 const routes = [
-    {
+   {
       name: 'homePanel',
       path: '/panel',
       component: homePanel
   },
-   {
+  {
       name: 'settings',
       path: '/panel/settings',
       component: settings,
-  }
+  },
+  {
+      name: 'projects',
+      path: '/panel/projects',
+      component: projects,
+  },
+  {
+      name: 'addProject',
+      path: '/panel/project/create',
+      component: addProject,
+  },
+  {
+      name: 'editProject',
+      path: '/panel/project/edit/:id',
+      component: editProject,
+  },
 ];
 
 const router = new VueRouter({ mode: 'abstract', routes: routes});

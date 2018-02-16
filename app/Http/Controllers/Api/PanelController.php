@@ -33,7 +33,7 @@ class PanelController extends Controller
             $executedPosts = 0;
         }
 
-        return response()->json(['success'=>1, 'response'=> ['futuredPosts' => $futuredPosts,  'executedPosts' => $executedPosts, 'project' => $project]]);
+        return response()->json(['success'=>1, 'response'=> ['futuredPosts' => $futuredPosts,  'executedPosts' => $executedPosts, 'project' => $project, 'settings' => $settings]]);
 
     }
 
@@ -63,11 +63,12 @@ class PanelController extends Controller
     }
 
     public function projects(){
-        return view('panel.projects')->with('projects', Project::all());
+        $projects = Project::all();
+        return response()->json(['success' => 1, 'response'=>['projects' =>  $projects]]);
     }
 
     public function projectStore(Request $request){
-        
+
         $validator = Validator::make($request->all(), [
             'name' => 'required',
             'password' => 'required',
@@ -94,26 +95,35 @@ class PanelController extends Controller
         return response()->json(['success' => 1]);
     }
 
-    public function projectEdit($id){
-        $project = Project::findOrFail($id);
+    public function project($id){
+
+        $project = Project::find($id);
+
+        if(!$project){
+            return response()->json(['success' => 0, 'error' => 'Такой проект не найден']);
+        }
+
         $feed = json_decode($project->feed);
         $feed = implode("\r\n", $feed);
         $tags = json_decode($project->tags);
         $tags = implode("\r\n", $tags);
-        return view('panel.project_edit')->with('project', $project)
-                                            ->with('feed', $feed)
-                                                ->with('tags', $tags);
+
+        return response()->json(['success' => 1, 'response' => ['project'=>$project, 'feed'=>$feed, 'tags' => $tags]]);
     }
 
     public function projectUpdate(Request $request, $id){
 
-        $this->validate($request, [
+        $validator = Validator::make($request->all(), [
             'name' => 'required',
             'password' => 'required',
             'login' => 'required',
             'feed' => 'required',
             'tags' => 'required'
         ]);
+
+        if(!$validator->passes()){
+            return response()->json(['success' => 0, 'error' => 'Необходимые поля не заполнены']);
+        }
 
         $feed = explode("\r\n", $request->feed);
         $tags = explode("\r\n", $request->tags);
@@ -125,8 +135,7 @@ class PanelController extends Controller
         $project->tags = json_encode($tags);
         $project->save();
 
-        Session::flash('success', 'Проект обновлен');
-        return redirect()->route('projects');
+        return response()->json(['success' => 1]);
     }
 
     public function projectDelete($id){
@@ -136,14 +145,18 @@ class PanelController extends Controller
             $settings->save();
         }
 
-        $project = Project::findOrFail($id);
+        $project = Project::find($id);
+
+         if(!$project){
+            return response()->json(['success' => 0, 'error' => 'Такой проект не найден']);
+        }
+
         foreach($project->posts as $p){
             $p->delete();
         }
         $project->delete();
 
-        Session::flash('success', 'Проект удален');
-        return redirect()->route('settings');
+        return response()->json(['success' => 1]);
     }
 
     public function get(){
